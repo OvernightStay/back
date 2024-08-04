@@ -74,9 +74,9 @@ class VerifyCodeViewSet(APIView):
                 player.code_expiry = None
                 player.is_active = True  # Активация аккаунта после успешной верификации
                 player.save()
-                auth_login(request, player, backend=get_backend_name())
-                tokens = get_tokens_for_player(player)
-                return Response({'detail': 'Login successful', 'tokens': tokens}, status=status.HTTP_200_OK)
+                # auth_login(request, player, backend=get_backend_name())
+                # tokens = get_tokens_for_player(player)
+                return Response({'detail': 'Register successful'}, status=status.HTTP_200_OK)
             
             return Response({'detail': 'Invalid or expired code'}, status=status.HTTP_400_BAD_REQUEST)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -127,13 +127,13 @@ class PasswordResetConfirmView(APIView):
     def post(self, request):
         serializer = PasswordResetConfirmSerializer(data=request.data)
         if serializer.is_valid():
-            email = serializer.validated_data['email']
+            code = serializer.validated_data['code']
             new_password = serializer.validated_data['new_password']
-            player = Player.objects.get(email=email)
+            player = Player.objects.get(verification_code=code)
             player.set_password(new_password)
             player.verification_code = None
             player.code_expiry = None
             player.save()
-            auth_login(request, player, backend=get_backend_name())
+            # auth_login(request, player, backend=get_backend_name())
             return Response({'detail': 'Password has been reset.'}, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

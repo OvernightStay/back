@@ -8,17 +8,19 @@ import uuid
 
 # Модель менеджера
 class PlayerManager(BaseUserManager):
-    def create_user(self, phone, email, password=None, **extra_fields):
+    def create_user(self, login, email, password=None, **extra_fields):
+        if not login:
+            raise ValueError('The Login field must be set')
         if not email:
             raise ValueError('The Email field must be set')
         email = self.normalize_email(email)
-        user = self.model(phone=phone, email=email, **extra_fields)
+        user = self.model(login=login, email=email, **extra_fields)
         user.set_password(password)
         user.is_active = False  # Аккаунт неактивен до верификации по коду из письма
         user.save(using=self._db)
         return user
 
-    def create_superuser(self, phone, email, password=None, **extra_fields):
+    def create_superuser(self, login, email, password=None, **extra_fields):
         extra_fields.setdefault('is_staff', True)
         extra_fields.setdefault('is_superuser', True)
 
@@ -27,7 +29,7 @@ class PlayerManager(BaseUserManager):
         if extra_fields.get('is_superuser') is not True:
             raise ValueError('Superuser must have is_superuser=True.')
 
-        return self.create_user(phone, email, password, **extra_fields)
+        return self.create_user(login, email, password, **extra_fields)
 
 
 # Данные игрока
@@ -39,14 +41,16 @@ class Player(AbstractUser, PermissionsMixin):
     
     objects = PlayerManager()
     
-    phone = models.CharField(max_length=15, null=True, unique=True, verbose_name='Телефон')
+    login = models.CharField(max_length=50, unique=True, verbose_name='Логин')
     email = models.EmailField(max_length=50, null=True, unique=True)
+    phone = models.CharField(max_length=15, null=True, unique=True, verbose_name='Телефон')
     gender = models.CharField(max_length=1, null=True, choices=GENDER_CHOICES, verbose_name='Пол')
+    training_check = models.BooleanField(default=False)
     date_joined = models.DateTimeField(auto_now_add=True, verbose_name='Дата создания аккаунта')
     verification_code = models.CharField(max_length=6, blank=True, null=True, verbose_name='Код верификации')
     code_expiry = models.DateTimeField(blank=True, null=True, verbose_name='Срок действия кода')
     
-    USERNAME_FIELD = 'username'
+    USERNAME_FIELD = 'login'
     REQUIRED_FIELDS = ['email', 'phone']
     
     def generate_verification_code(self):
@@ -57,4 +61,5 @@ class Player(AbstractUser, PermissionsMixin):
         return code
     
     def __str__(self):
-        return f'{self.first_name} {self.last_name} | {self.email}'
+        return f'{self.first_name} {self.last_name} | {self.login} {self.email}'
+    

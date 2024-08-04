@@ -52,7 +52,7 @@ INSTALLED_APPS = [
 AUTH_USER_MODEL = 'user_app.Player'
 
 AUTHENTICATION_BACKENDS = (
-    'user_app.authentication.EmailOrPhoneBackend',
+    'user_app.authentication.LoginBackend',
     'django.contrib.auth.backends.ModelBackend',
 )
 

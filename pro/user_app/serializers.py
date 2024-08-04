@@ -7,7 +7,7 @@ Player = get_user_model()
 class PlayerRegisterSerializer(serializers.ModelSerializer):
     class Meta:
         model = Player
-        fields = ['phone', 'email', 'password', 'first_name', 'last_name']
+        fields = ['login', 'email', 'phone', 'password', 'first_name', 'last_name']
         extra_kwargs = {
             'password': {'write_only': True}
         }
@@ -21,8 +21,9 @@ class PlayerRegisterSerializer(serializers.ModelSerializer):
     
     def create(self, validated_data):
         player = Player.objects.create_user(
-            phone=validated_data['phone'],
+            login=validated_data['login'],
             email=validated_data['email'],
+            phone=validated_data['phone'],
             password=validated_data['password'],
             first_name=validated_data.get('first_name', ''),
             last_name=validated_data.get('last_name', '')
@@ -33,14 +34,6 @@ class PlayerRegisterSerializer(serializers.ModelSerializer):
 class PlayerLoginSerializer(serializers.Serializer):
     login = serializers.CharField(required=True)
     password = serializers.CharField(required=True)
-    
-    def validate_login(self, value):
-        if '@' in value:
-            return value
-        elif value.isdigit() and len(value) == 11:
-            return value
-        else:
-            raise serializers.ValidationError("Login must be a valid email or phone number.")
 
 
 class VerifyCodeSerializer(serializers.Serializer):
@@ -50,7 +43,17 @@ class VerifyCodeSerializer(serializers.Serializer):
 class PlayerSerializer(serializers.ModelSerializer):
     class Meta:
         model = Player
-        fields = ['id', 'email', 'phone', 'first_name', 'last_name']
+        fields = ['id', 'login', 'email', 'phone', 'first_name', 'last_name', 'gender', 'training_check']
+
+    def validate_login(self, value):
+        if Player.objects.filter(login=value).exclude(id=self.instance.id).exists():
+            raise serializers.ValidationError("This login is already in use.")
+        return value   
+
+    def validate_email(self, value):
+        if Player.objects.filter(email=value).exclude(id=self.instance.id).exists():
+            raise serializers.ValidationError("This email is already in use.")
+        return value    
         
     def validate_phone(self, value):
         if not value.isdigit():
@@ -59,11 +62,6 @@ class PlayerSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError("Phone number must be exactly 11 digits.")
         if Player.objects.filter(phone=value).exclude(id=self.instance.id).exists():
             raise serializers.ValidationError("This phone number is already in use.")
-        return value
-
-    def validate_email(self, value):
-        if Player.objects.filter(email=value).exclude(id=self.instance.id).exists():
-            raise serializers.ValidationError("This email is already in use.")
         return value
 
 
@@ -78,7 +76,6 @@ class PasswordResetRequestSerializer(serializers.Serializer):
 
 
 class PasswordResetConfirmSerializer(serializers.Serializer):
-    email = serializers.EmailField()
     code = serializers.CharField()
     new_password = serializers.CharField()
 
@@ -87,15 +84,10 @@ class PasswordResetConfirmSerializer(serializers.Serializer):
             raise serializers.ValidationError("Invalid code.")
         return value
 
-    def validate_new_password(self, value):
-        # Добавьте здесь дополнительные проверки пароля, если нужно
-        return value
-
     def validate(self, attrs):
-        email = attrs.get('email')
         code = attrs.get('code')
         try:
-            player = Player.objects.get(email=email, verification_code=code)
+            player = Player.objects.get(verification_code=code)
         except Player.DoesNotExist:
             raise serializers.ValidationError("Invalid code or email.")
         

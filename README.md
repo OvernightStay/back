@@ -46,16 +46,17 @@ python manage.py runserver
 ### ```register/```
 Регистрация.   
 Запрашиваемые аргументы:
+* ```login```
+* ```password```
 * ```email```
 * ```phone```
-* ```password```
 * ```first_name```
 * ```last_name```
 
 ### ```login/```
 Аутентификация.   
 Аргументы:
-* ```login``` (email или phone)
+* ```login```
 * ```password```
 
 ### ```verify/```
@@ -73,6 +74,8 @@ python manage.py runserver
 * ```last_name```
 * ```phone```
 * ```email```
+* ```gender```
+* ```training_check```
 
 ### ```password-reset/```
 Запрос на изменение пароля.   
