@@ -85,6 +85,5 @@ python manage.py runserver
 ### ```password-reset-confirm/```
 Подтверждение нового пароля.   
 Аргументы:
-* ```email```
 * ```code```
 * ```new_password```
