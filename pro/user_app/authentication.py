@@ -14,8 +14,9 @@ class LoginBackend(ModelBackend):
         except Player.DoesNotExist:
             return
         
-        if player.check_password(password) and self.user_can_authenticate(player):
-            return player
+        if player.check_password(password):
+            if player.is_superuser or self.user_can_authenticate(player):
+                return player
         return None
 
 def get_backend_name():

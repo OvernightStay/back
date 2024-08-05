@@ -29,7 +29,10 @@ class PlayerManager(BaseUserManager):
         if extra_fields.get('is_superuser') is not True:
             raise ValueError('Superuser must have is_superuser=True.')
 
-        return self.create_user(login, email, password, **extra_fields)
+        user = self.create_user(login, email, password, **extra_fields)
+        user.is_active = True  # Суперпользователь активен по умолчанию
+        user.save(using=self._db)
+        return user
 
 
 # Данные игрока

@@ -13,13 +13,7 @@ venv\scripts\activate
 
 ### Установите необходимые для работы библиотеки:
 ```commandline
-pip install -r ../requirements.txt
-```
-
-### Сделайте миграции:
-```commandline
-python manage.py makemigrations
-python manage.py migrate
+pip install -r requirements.txt
 ```
 
 ### Создайте файл .env в корневой папке и укажите свои переменные для почтовых отправлений:
@@ -29,6 +23,13 @@ EMAIL_PORT=
 EMAIL_HOST_USER=''
 EMAIL_HOST_PASSWORD=''
 DEFAULT_FROM_EMAIL=''
+```
+
+### Перейдите в основную папку проекта и сделайте миграции:
+```commandline
+cd pro
+python manage.py makemigrations
+python manage.py migrate
 ```
 
 ### Запустите сервер:
