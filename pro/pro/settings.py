@@ -34,7 +34,7 @@ ALLOWED_HOSTS = ['127.0.0.1', 'localhost']
 # Application definition
 
 INSTALLED_APPS = [
-    'jazzmin',
+    'jazzmin',  # библиотека jazzmin — красоты админки невероятной для
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -184,3 +184,201 @@ EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')
 DEFAULT_FROM_EMAIL = config('DEFAULT_FROM_EMAIL')
 
 APSCHEDULER_DATETIME_FORMAT = "N j, Y, f:s a"
+
+
+"""
+Настройки библиотеки Jazzmin. С комментариями по каждой настройке. Закомментированые можно тестить.
+"""
+JAZZMIN_SETTINGS = {
+    # заголовок окна (по умолчанию будет current_admin_site.site_title, если он отсутствует или отсутствует)
+    "site_title": "Ночлежка Admin",
+
+    # Заголовок на экране входа в систему (максимум 19 символов) (по умолчанию — current_admin_site.site_header,
+    # если он отсутствует или отсутствует)
+    "site_header": "Ночлежка",
+
+    # Название бренда (максимум 19 символов) (по умолчанию current_admin_site.site_header,
+    # если оно отсутствует или отсутствует)
+    "site_brand": "Ночлежка",
+
+    # # Название бренда (максимум 19 символов) (по умолчанию current_admin_site.site_header,
+    # # если оно отсутствует или отсутствует)
+    # "site_logo": "/logo.png",
+
+    # # Логотип, используемый для вашего сайта, должен присутствовать в статических файлах,
+    # # используется для логотипа формы входа (по умолчанию site_logo)
+    # "login_logo": None,
+    #
+    # # Логотип для формы входа в темные темы (по умолчанию — login_logo)
+    # "login_logo_dark": None,
+    #
+    # # Классы CSS, которые применяются к логотипу выше
+    # "site_logo_classes": "img-circle",
+
+    # # Относительный путь к значку вашего сайта, по умолчанию будет site_logo,
+    # # если он отсутствует (в идеале 32x32 пикселей).
+    # "site_icon": None,
+
+    # Текст приветствия на экране входа в систему
+    "welcome_sign": "Добро пожаловать в 'Ночлежку'",
+
+    # Авторские права в нижнем колонтитуле
+    "copyright": "TOXIC TEAM",
+
+    # # Список администраторов модели для поиска из панели поиска, панель поиска опускается, если она исключена
+    # # Если вы хотите использовать одно поле поиска, вам не нужно использовать список,
+    # # вы можете использовать простую строку
+    # "search_model": ["auth.User", "auth.Group"],
+
+    # Имя поля в модели пользователя, которое содержит аватар ImageField/URLField/Charfield или вызываемый объект,
+    # который получает пользователя
+    # "user_avatar": None,
+
+    ############
+    # Top Menu #
+    ############
+
+    # # Ссылки для размещения в верхнем меню
+    # "topmenu_links": [
+    #
+    #     # Url that gets reversed (Permissions can be added)
+    #     {"name": "Home", "url": "admin:index", "permissions": ["auth.view_user"]},
+    #
+    #     # external url that opens in a new window (Permissions can be added)
+    #     {"name": "Support", "url": "https://github.com/farridav/django-jazzmin/issues", "new_window": True},
+    #
+    #     # model admin to link to (Permissions checked against model)
+    #     {"model": "auth.User"},
+    #
+    #     # App with dropdown menu to all its models pages (Permissions checked against models)
+    #     {"app": "books"},
+    # ],
+
+    #############
+    # User Menu #
+    #############
+
+    # # Дополнительные ссылки для включения в меню пользователя в правом верхнем углу
+    # # (тип URL-адреса «приложение» не разрешен)
+    # "usermenu_links": [
+    #     {"name": "Support", "url": "https://github.com/farridav/django-jazzmin/issues", "new_window": True},
+    #     {"model": "auth.user"}
+    # ],
+
+    #############
+    # Side Menu #
+    #############
+
+    # Отображать ли боковое меню
+    "show_sidebar": True,
+
+    # Стоит ли автоматически расширять меню
+    "navigation_expanded": True,
+
+    # # Скрыть эти приложения при создании бокового меню, например (аутентификация)
+    # "hide_apps": [],
+    #
+    # # Скрыть эти модели при создании бокового меню (например, auth.user)
+    # "hide_models": [],
+
+    # # Список приложений (и/или моделей) для заказа в базовом боковом меню
+    # # (не обязательно содержать все приложения/модели)
+    # "order_with_respect_to": ["auth", "books", "books.author", "books.book"],
+
+    # # Пользовательские ссылки для добавления в группы приложений, привязанные к названию приложения.
+    # "custom_links": {
+    #     "books": [{
+    #         "name": "Make Messages",
+    #         "url": "make_messages",
+    #         "icon": "fas fa-comments",
+    #         "permissions": ["books.view_book"]
+    #     }]
+    # },
+
+    # # Пользовательские значки для приложений/моделей бокового меню.
+    # # См. https://fontawesome.com/icons?d=gallery&m=free&v=5.0.0,5.0.1,5.0.10,5.0.11,5.0.12,5.0.13, 5.0.2,5.0.3,5.0.4,5.0.5,5.0.6,5.0.7,5.0.8,5.0.9,5.1.0,5.1.1,5.2.0,5.3.0,5.3. 1,5.4.0,5.4.1,5.4.2,5.13.0,5.12.0,5.11.2,5.11.1,5.10.0,5.9.0,5.8.2,5.8.1,5.7.2, 5.7.1,5.7.0,5.6.3,5.5.0,5.4.2
+    # # для получения полного списка бесплатных классов значков версии 5.13.0
+    # "icons": {
+    #     "auth": "fas fa-users-cog",
+    #     "auth.user": "fas fa-user",
+    #     "auth.Group": "fas fa-users",
+    # },
+    # # Значки, которые используются, если они не указаны вручную
+    # "default_icon_parents": "fas fa-chevron-circle-right",
+    # "default_icon_children": "fas fa-circle",
+
+    #################
+    # Related Modal #
+    #################
+    # Используйте модальные окна вместо всплывающих окон (False по умолчанию)
+    # "related_modal_active": True,
+
+    #############
+    # UI Tweaks #
+    #############
+    # # Относительные пути к пользовательским сценариям CSS/JS (должны присутствовать в статических файлах)
+    # "custom_css": None,
+    # "custom_js": None,
+    # # Связывать ли шрифт с Fonts.googleapis.com (в противном случае используйте custom_css для указания шрифта)
+    # "use_google_fonts_cdn": True,
+    # Показывать ли настройщик пользовательского интерфейса на боковой панели
+    "show_ui_builder": False,
+
+    ###############
+    # Change view #
+    ###############
+    # Render out the change view as a single form, or in tabs, current options are
+    # - single
+    # - horizontal_tabs (default)
+    # - vertical_tabs
+    # - collapsible
+    # - carousel
+    # Отображение представления изменений в виде одной формы или вкладок, текущие параметры
+    # - одинокий
+    # - горизонтальные_табы (по умолчанию)
+    # - вертикальные_табы
+    # - складной
+    # - карусель
+    "changeform_format": "collapsible",
+    # # переопределить формы изменений для каждого администратора модели
+    # "changeform_format_overrides": {"auth.user": "collapsible", "auth.group": "vertical_tabs"},
+    # # Добавляем раскрывающийся список языков в админку
+    # "language_chooser": True,
+}
+
+'''
+Настройки темы JAZZMIN — админка
+'''
+
+JAZZMIN_UI_TWEAKS = {
+    "navbar_small_text": False,
+    "footer_small_text": False,
+    "body_small_text": True,
+    "brand_small_text": False,
+    "brand_colour": False,
+    "accent": "accent-primary",
+    "navbar": "navbar-white navbar-light",
+    "no_navbar_border": False,
+    "navbar_fixed": False,
+    "layout_boxed": False,
+    "footer_fixed": True,
+    "sidebar_fixed": False,
+    "sidebar": "sidebar-dark-primary",
+    "sidebar_nav_small_text": False,
+    "sidebar_disable_expand": False,
+    "sidebar_nav_child_indent": False,
+    "sidebar_nav_compact_style": False,
+    "sidebar_nav_legacy_style": False,
+    "sidebar_nav_flat_style": False,
+    "theme": "journal",
+    "dark_mode_theme": None,
+    "button_classes": {
+        "primary": "btn-outline-primary",
+        "secondary": "btn-outline-secondary",
+        "info": "btn-info",
+        "warning": "btn-warning",
+        "danger": "btn-danger",
+        "success": "btn-success"
+    },
+    "actions_sticky_top": True
+}

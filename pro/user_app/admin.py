@@ -1,13 +1,20 @@
 from django.contrib import admin
+
 from .models import Player
 
 
+# Регистрируем модели в админке
+@admin.register(Player)
 class PlayerAdmin(admin.ModelAdmin):
-    list_display = ('first_name', 'last_name', 'login', 'email', 'phone', 'gender', 'date_joined')
+    list_display = ('first_name', 'last_name', 'training_check', 'login', 'email', 'phone', 'gender', 'date_joined')
     search_fields = ('login', 'email', 'phone', 'last_name')
     list_filter = ('gender', 'is_staff', 'is_active')
-    ordering = ('date_joined',)
-
-
-# Регистрируем модели в админке
-admin.site.register(Player, PlayerAdmin)
+    ordering = ('-date_joined',)
+    list_display_links = ('first_name', 'last_name', 'login',)
+    readonly_fields = ('date_joined', 'training_check')
+    list_per_page = 10
+    fieldsets = (
+        (None, {
+            'fields': ('first_name', 'last_name', 'training_check', 'login', 'email', 'phone', 'gender', 'date_joined')
+        }),
+    )
