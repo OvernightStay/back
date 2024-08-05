@@ -37,6 +37,11 @@ class PlayerManager(BaseUserManager):
 
 # Данные игрока
 class Player(AbstractUser, PermissionsMixin):
+   
+    class Meta:
+        verbose_name = 'Игрок'
+        verbose_name_plural = 'Игроки'
+
     GENDER_CHOICES = [
         ('M', 'Male'),
         ('F', 'Female'),
