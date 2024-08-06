@@ -41,29 +41,32 @@ class Player(AbstractUser, PermissionsMixin):
         ('M', 'Male'),
         ('F', 'Female'),
     ]
-    
+
     objects = PlayerManager()
-    
+
     login = models.CharField(max_length=50, unique=True, verbose_name='Логин')
     email = models.EmailField(max_length=50, null=True, unique=True)
     phone = models.CharField(max_length=15, null=True, unique=True, verbose_name='Телефон')
     gender = models.CharField(max_length=1, null=True, choices=GENDER_CHOICES, verbose_name='Пол')
-    training_check = models.BooleanField(default=False)
+    training_check = models.BooleanField(default=False, verbose_name='Обучение')
     date_joined = models.DateTimeField(auto_now_add=True, verbose_name='Дата создания аккаунта')
     date_of_change = models.DateTimeField(auto_now=True, verbose_name='Дата изменения аккаунта')
     verification_code = models.CharField(max_length=6, blank=True, null=True, verbose_name='Код верификации')
     code_expiry = models.DateTimeField(blank=True, null=True, verbose_name='Срок действия кода')
-    
+
     USERNAME_FIELD = 'login'
     REQUIRED_FIELDS = ['email', 'phone']
-    
+
     def generate_verification_code(self):
         code = str(uuid.uuid4().int)[:6]
         self.verification_code = code
         self.code_expiry = timezone.now() + timedelta(minutes=5)
         self.save()
         return code
-    
+
     def __str__(self):
         return f'{self.first_name} {self.last_name} | {self.login} {self.email}'
-    
+
+    class Meta:
+        verbose_name = 'Игрок'
+        verbose_name_plural = 'Игроки'
