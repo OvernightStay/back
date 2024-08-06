@@ -50,6 +50,7 @@ class Player(AbstractUser, PermissionsMixin):
     gender = models.CharField(max_length=1, null=True, choices=GENDER_CHOICES, verbose_name='Пол')
     training_check = models.BooleanField(default=False)
     date_joined = models.DateTimeField(auto_now_add=True, verbose_name='Дата создания аккаунта')
+    date_of_change = models.DateTimeField(auto_now=True, verbose_name='Дата изменения аккаунта')
     verification_code = models.CharField(max_length=6, blank=True, null=True, verbose_name='Код верификации')
     code_expiry = models.DateTimeField(blank=True, null=True, verbose_name='Срок действия кода')
     
