@@ -13,6 +13,7 @@ from .authentication import get_backend_name
 
 Player = get_user_model()
 
+
 def get_tokens_for_player(player):
     refresh = RefreshToken.for_user(player)
     return {
@@ -21,16 +22,25 @@ def get_tokens_for_player(player):
     }
 
 
-class PlayerRegisterViewSet(APIView):
+class FlexibleRegisterViewSet(APIView):
     permission_classes = [permissions.AllowAny]
-    
+
     def post(self, request):
-        serializer = PlayerRegisterSerializer(data=request.data)
+        simple_registration = request.data.get('simple', False)
+        serializer = FlexibleRegisterSerializer(data=request.data)
+
         if serializer.is_valid():
             player = serializer.save()
-            code = player.generate_verification_code()
-            send_verification_code_email(player.email, code)
-            return Response({'detail': 'Verification code sent for new user'}, status=status.HTTP_200_OK)
+
+            if not simple_registration:
+                code = player.generate_verification_code()
+                send_verification_code_email(player.email, code)
+                return Response({'detail': 'Verification code sent. User needs to verify their email.'},
+                                status=status.HTTP_200_OK)
+
+            tokens = get_tokens_for_player(player)
+            return Response({'detail': 'Registration successful', 'tokens': tokens}, status=status.HTTP_200_OK)
+
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
@@ -42,21 +52,22 @@ class PlayerLoginViewSet(APIView):
         if serializer.is_valid():
             login = serializer.validated_data.get('login')
             password = serializer.validated_data.get('password')
-            
+
             player = authenticate(request, username=login, password=password)
-            
+
             if player is not None:
                 if not player.is_active:
                     code = player.generate_verification_code()
                     send_verification_code_email(player.email, code)
-                    return Response({'detail': 'Account is not activated. Verification code sent again.'}, status=status.HTTP_400_BAD_REQUEST)
-                
+                    return Response({'detail': 'Account is not activated. Verification code sent again.'},
+                                    status=status.HTTP_400_BAD_REQUEST)
+
                 auth_login(request, player, backend=get_backend_name())
                 tokens = get_tokens_for_player(player)
                 return Response({'detail': 'Login successful', 'tokens': tokens}, status=status.HTTP_200_OK)
             else:
                 return Response({'detail': 'Invalid login credentials'}, status=status.HTTP_400_BAD_REQUEST)
-            
+
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
@@ -68,7 +79,7 @@ class VerifyCodeViewSet(APIView):
         if serializer.is_valid():
             code = serializer.validated_data.get('code')
             player = Player.objects.filter(verification_code=code).first()
-            
+
             if player and player.code_expiry > timezone.now():
                 player.verification_code = None
                 player.code_expiry = None
@@ -77,7 +88,7 @@ class VerifyCodeViewSet(APIView):
                 # auth_login(request, player, backend=get_backend_name())
                 # tokens = get_tokens_for_player(player)
                 return Response({'detail': 'Register successful'}, status=status.HTTP_200_OK)
-            
+
             return Response({'detail': 'Invalid or expired code'}, status=status.HTTP_400_BAD_REQUEST)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
