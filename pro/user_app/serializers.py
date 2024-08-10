@@ -4,26 +4,31 @@ from django.utils import timezone
 
 Player = get_user_model()
 
-class PlayerRegisterSerializer(serializers.ModelSerializer):
+
+class FlexibleRegisterSerializer(serializers.ModelSerializer):
     class Meta:
         model = Player
         fields = ['login', 'email', 'phone', 'password', 'first_name', 'last_name']
         extra_kwargs = {
-            'password': {'write_only': True}
+            'password': {'write_only': True},
+            'email': {'required': False},
+            'phone': {'required': False},
+            'first_name': {'required': False},
+            'last_name': {'required': False},
         }
-    
+
     def validate_phone(self, value):
-        if not value.isdigit():
+        if value and not value.isdigit():  # Валидация выполняется только если поле заполнено
             raise serializers.ValidationError("Phone number must contain only digits.")
-        if len(value) != 11:
+        if value and len(value) != 11:
             raise serializers.ValidationError("Phone number must be exactly 11 digits.")
         return value
-    
+
     def create(self, validated_data):
         player = Player.objects.create_user(
             login=validated_data['login'],
-            email=validated_data['email'],
-            phone=validated_data['phone'],
+            email=validated_data.get('email'),
+            phone=validated_data.get('phone'),
             password=validated_data['password'],
             first_name=validated_data.get('first_name', ''),
             last_name=validated_data.get('last_name', '')
@@ -48,13 +53,13 @@ class PlayerSerializer(serializers.ModelSerializer):
     def validate_login(self, value):
         if Player.objects.filter(login=value).exclude(id=self.instance.id).exists():
             raise serializers.ValidationError("This login is already in use.")
-        return value   
+        return value
 
     def validate_email(self, value):
         if Player.objects.filter(email=value).exclude(id=self.instance.id).exists():
             raise serializers.ValidationError("This email is already in use.")
-        return value    
-        
+        return value
+
     def validate_phone(self, value):
         if not value.isdigit():
             raise serializers.ValidationError("Phone number must contain only digits.")
@@ -90,8 +95,8 @@ class PasswordResetConfirmSerializer(serializers.Serializer):
             player = Player.objects.get(verification_code=code)
         except Player.DoesNotExist:
             raise serializers.ValidationError("Invalid code or email.")
-        
+
         if player.code_expiry < timezone.now():
             raise serializers.ValidationError("The code has expired.")
-        
+
         return attrs
