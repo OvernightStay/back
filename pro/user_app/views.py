@@ -9,7 +9,6 @@ from rest_framework.authentication import SessionAuthentication
 from django.contrib.auth import get_user_model
 from .serializers import *
 from .utils import send_verification_code_email
-from .authentication import get_backend_name
 
 Player = get_user_model()
 
@@ -27,10 +26,8 @@ class PlayerRegisterViewSet(APIView):
     def post(self, request):
         serializer = PlayerRegisterSerializer(data=request.data)
         if serializer.is_valid():
-            player = serializer.save()
-            code = player.generate_verification_code()
-            send_verification_code_email(player.email, code)
-            return Response({'detail': 'Verification code sent for new user'}, status=status.HTTP_200_OK)
+            serializer.save()
+            return Response({'detail': 'Register successful'}, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
@@ -42,43 +39,10 @@ class PlayerLoginViewSet(APIView):
         if serializer.is_valid():
             login = serializer.validated_data.get('login')
             password = serializer.validated_data.get('password')
-            
             player = authenticate(request, username=login, password=password)
-            
-            if player is not None:
-                if not player.is_active:
-                    code = player.generate_verification_code()
-                    send_verification_code_email(player.email, code)
-                    return Response({'detail': 'Account is not activated. Verification code sent again.'}, status=status.HTTP_400_BAD_REQUEST)
-                
-                auth_login(request, player, backend=get_backend_name())
-                tokens = get_tokens_for_player(player)
-                return Response({'detail': 'Login successful', 'tokens': tokens}, status=status.HTTP_200_OK)
-            else:
-                return Response({'detail': 'Invalid login credentials'}, status=status.HTTP_400_BAD_REQUEST)
-            
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-
-class VerifyCodeViewSet(APIView):
-    permission_classes = [permissions.AllowAny]
-
-    def post(self, request):
-        serializer = VerifyCodeSerializer(data=request.data)
-        if serializer.is_valid():
-            code = serializer.validated_data.get('code')
-            player = Player.objects.filter(verification_code=code).first()
-            
-            if player and player.code_expiry > timezone.now():
-                player.verification_code = None
-                player.code_expiry = None
-                player.is_active = True  # Активация аккаунта после успешной верификации
-                player.save()
-                # auth_login(request, player, backend=get_backend_name())
-                # tokens = get_tokens_for_player(player)
-                return Response({'detail': 'Register successful'}, status=status.HTTP_200_OK)
-            
-            return Response({'detail': 'Invalid or expired code'}, status=status.HTTP_400_BAD_REQUEST)
+            auth_login(request, player, backend='django.contrib.auth.backends.ModelBackend')
+            tokens = get_tokens_for_player(player)
+            return Response({'detail': 'Login successful', 'tokens': tokens}, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
@@ -99,8 +63,24 @@ class PlayerViewSet(APIView):
         return Response({'player': serializer.data}, status=status.HTTP_200_OK)
 
     def put(self, request):
-        serializer = PlayerSerializer(request.user, data=request.data, partial=True)
+        player = request.user
+        serializer = PlayerSerializer(player, data=request.data, partial=True)
         if serializer.is_valid():
+            if 'current_password' in request.data and 'new_password' in request.data:
+                current_password = request.data.get('current_password')
+                if not player.check_password(current_password):
+                    return Response({'detail': 'Current password is incorrect.'}, status=status.HTTP_400_BAD_REQUEST)
+                
+                new_password = request.data.get('new_password')
+                player.set_password(new_password)
+                player.save()
+                return Response({'detail': 'Password has been updated successfully.'}, status=status.HTTP_200_OK)
+            
+            elif 'new_password' in request.data:
+                new_password = request.data.get('new_password')
+                player.set_password(new_password)
+                player.save()
+                return Response({'detail': 'Password has been updated successfully.'}, status=status.HTTP_200_OK)
             serializer.save()
             return Response({'player': serializer.data}, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -128,12 +108,33 @@ class PasswordResetConfirmView(APIView):
         serializer = PasswordResetConfirmSerializer(data=request.data)
         if serializer.is_valid():
             code = serializer.validated_data['code']
-            new_password = serializer.validated_data['new_password']
             player = Player.objects.get(verification_code=code)
-            player.set_password(new_password)
             player.verification_code = None
             player.code_expiry = None
             player.save()
-            # auth_login(request, player, backend=get_backend_name())
+            auth_login(request, player, backend='django.contrib.auth.backends.ModelBackend')
             return Response({'detail': 'Password has been reset.'}, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+# class VerifyCodeViewSet(APIView):
+#     permission_classes = [permissions.AllowAny]
+
+#     def post(self, request):
+#         serializer = VerifyCodeSerializer(data=request.data)
+#         if serializer.is_valid():
+#             code = serializer.validated_data.get('code')
+#             player = Player.objects.filter(verification_code=code).first()
+            
+#             if player and player.code_expiry > timezone.now():
+#                 player.verification_code = None
+#                 player.code_expiry = None
+#                 player.is_active = True  # Активация аккаунта после успешной верификации
+#                 player.save()
+#                 # auth_login(request, player, backend=get_backend_name())
+#                 # tokens = get_tokens_for_player(player)
+#                 return Response({'detail': 'Register successful'}, status=status.HTTP_200_OK)
+            
+#             return Response({'detail': 'Invalid or expired code'}, status=status.HTTP_400_BAD_REQUEST)
+#         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    

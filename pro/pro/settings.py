@@ -51,10 +51,10 @@ INSTALLED_APPS = [
 # User model
 AUTH_USER_MODEL = 'user_app.Player'
 
-AUTHENTICATION_BACKENDS = (
-    'user_app.authentication.LoginBackend',
-    'django.contrib.auth.backends.ModelBackend',
-)
+# AUTHENTICATION_BACKENDS = (
+#     'user_app.authentication.LoginBackend',
+#     'django.contrib.auth.backends.ModelBackend',
+# )
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
