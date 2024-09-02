@@ -6,6 +6,7 @@ from datetime import timedelta
 import uuid
 import threading
 
+
 # Модель менеджера
 class PlayerManager(BaseUserManager):
     def create_user(self, login, email=None, password=None, **extra_fields):
@@ -52,10 +53,10 @@ class Player(AbstractUser, PermissionsMixin):
         ('M', 'Male'),
         ('F', 'Female'),
     ]
-    
+
     objects = PlayerManager()
 
-    username = models.CharField(max_length=50, null=True, blank=True)
+    username = models.CharField(max_length=50, null=True, blank=True, verbose_name='Имя пользователя')
     login = models.CharField(max_length=50, unique=True, verbose_name='Логин')
     email = models.EmailField(max_length=50, null=True, blank=True, unique=True)
     phone = models.CharField(max_length=15, null=True, unique=True, verbose_name='Телефон')
@@ -66,7 +67,8 @@ class Player(AbstractUser, PermissionsMixin):
     verification_code = models.CharField(max_length=6, blank=True, null=True, verbose_name='Код верификации')
     code_expiry = models.DateTimeField(blank=True, null=True, verbose_name='Срок действия кода')
     temporary_password = models.CharField(max_length=128, null=True, blank=True, verbose_name='Временный пароль')
-    temporary_password_created_at = models.DateTimeField(null=True, blank=True, verbose_name='Время создания временного пароля')
+    temporary_password_created_at = models.DateTimeField(null=True, blank=True,
+                                                         verbose_name='Время создания временного пароля')
 
     USERNAME_FIELD = 'login'
     REQUIRED_FIELDS = ['phone']
@@ -77,7 +79,7 @@ class Player(AbstractUser, PermissionsMixin):
         self.code_expiry = timezone.now() + timedelta(minutes=5)
         self.save()
         return code
-    
+
     def __str__(self):
         return f'{self.first_name} {self.last_name} | {self.login} {self.phone}'
 
