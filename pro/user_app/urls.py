@@ -4,7 +4,7 @@ from . import views
 urlpatterns = [
     path('register/', views.PlayerRegisterViewSet.as_view(), name='register'),
 	path('login/', views.PlayerLoginViewSet.as_view(), name='login'),
- 	path('verify/', views.VerifyCodeViewSet.as_view(), name='verify'),
+ 	# path('verify/', views.VerifyCodeViewSet.as_view(), name='verify'),
 	path('logout/', views.PlayerLogoutViewSet.as_view(), name='logout'),
 	path('player/', views.PlayerViewSet.as_view(), name='player'),
  	path('password-reset/', views.PasswordResetRequestView.as_view(), name='password_reset_request'),

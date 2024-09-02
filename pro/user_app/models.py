@@ -4,23 +4,35 @@ from django.contrib.auth.models import AbstractUser, PermissionsMixin
 from django.utils import timezone
 from datetime import timedelta
 import uuid
-
+import threading
 
 # Модель менеджера
 class PlayerManager(BaseUserManager):
-    def create_user(self, login, email, password=None, **extra_fields):
+    def create_user(self, login, email=None, password=None, **extra_fields):
         if not login:
             raise ValueError('The Login field must be set')
-        if not email:
-            raise ValueError('The Email field must be set')
-        email = self.normalize_email(email)
+        email = self.normalize_email(email) if email else None
         user = self.model(login=login, email=email, **extra_fields)
         user.set_password(password)
-        user.is_active = False  # Аккаунт неактивен до верификации по коду из письма
+
+        if email:
+            user.temporary_password = password
+            user.temporary_password_created_at = timezone.now()
+
         user.save(using=self._db)
+
+        if email:
+            # Запуск таймера для очистки поля
+            threading.Timer(10, self.clear_temporary_password, [user]).start()
+
         return user
 
-    def create_superuser(self, login, email, password=None, **extra_fields):
+    def clear_temporary_password(self, user):
+        if user.temporary_password and (timezone.now() - user.temporary_password_created_at).seconds >= 10:
+            user.temporary_password = None
+            user.save()
+
+    def create_superuser(self, login, email=None, password=None, **extra_fields):
         extra_fields.setdefault('is_staff', True)
         extra_fields.setdefault('is_superuser', True)
 
@@ -30,7 +42,6 @@ class PlayerManager(BaseUserManager):
             raise ValueError('Superuser must have is_superuser=True.')
 
         user = self.create_user(login, email, password, **extra_fields)
-        user.is_active = True  # Суперпользователь активен по умолчанию
         user.save(using=self._db)
         return user
 
@@ -41,11 +52,12 @@ class Player(AbstractUser, PermissionsMixin):
         ('M', 'Male'),
         ('F', 'Female'),
     ]
-
+    
     objects = PlayerManager()
 
+    username = models.CharField(max_length=50, null=True, blank=True)
     login = models.CharField(max_length=50, unique=True, verbose_name='Логин')
-    email = models.EmailField(max_length=50, null=True, unique=True)
+    email = models.EmailField(max_length=50, null=True, blank=True, unique=True)
     phone = models.CharField(max_length=15, null=True, unique=True, verbose_name='Телефон')
     gender = models.CharField(max_length=1, null=True, choices=GENDER_CHOICES, verbose_name='Пол')
     training_check = models.BooleanField(default=False, verbose_name='Обучение')
@@ -53,9 +65,11 @@ class Player(AbstractUser, PermissionsMixin):
     date_of_change = models.DateTimeField(auto_now=True, verbose_name='Дата изменения аккаунта')
     verification_code = models.CharField(max_length=6, blank=True, null=True, verbose_name='Код верификации')
     code_expiry = models.DateTimeField(blank=True, null=True, verbose_name='Срок действия кода')
+    temporary_password = models.CharField(max_length=128, null=True, blank=True, verbose_name='Временный пароль')
+    temporary_password_created_at = models.DateTimeField(null=True, blank=True, verbose_name='Время создания временного пароля')
 
     USERNAME_FIELD = 'login'
-    REQUIRED_FIELDS = ['email', 'phone']
+    REQUIRED_FIELDS = ['phone']
 
     def generate_verification_code(self):
         code = str(uuid.uuid4().int)[:6]
@@ -63,9 +77,9 @@ class Player(AbstractUser, PermissionsMixin):
         self.code_expiry = timezone.now() + timedelta(minutes=5)
         self.save()
         return code
-
+    
     def __str__(self):
-        return f'{self.first_name} {self.last_name} | {self.login} {self.email}'
+        return f'{self.first_name} {self.last_name} | {self.login} {self.phone}'
 
     class Meta:
         verbose_name = 'Игрок'
