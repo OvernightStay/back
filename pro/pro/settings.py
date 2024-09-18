@@ -48,6 +48,9 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt',
     'corsheaders',
     'drf_yasg',  # документация REST API
+    'experience_app',
+    'education_app',
+    'nightbus_app',
 ]
 
 # User model
