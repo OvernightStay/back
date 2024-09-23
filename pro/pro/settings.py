@@ -43,7 +43,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     # подключаем доп приложения
     'user_app',
-    'overnight_app',
+    'mini_location_app',
     'rest_framework',
     'rest_framework_simplejwt',
     'corsheaders',

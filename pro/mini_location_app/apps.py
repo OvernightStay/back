@@ -3,4 +3,4 @@ from django.apps import AppConfig
 
 class OvernightAppConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
-    name = 'overnight_app'
+    name = 'mini_location_app'
