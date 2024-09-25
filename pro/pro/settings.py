@@ -34,7 +34,7 @@ ALLOWED_HOSTS = ['127.0.0.1', 'localhost']
 # Application definition
 
 INSTALLED_APPS = [
-    'jazzmin',  # библиотека jazzmin — красоты админки невероятной для
+    # 'jazzmin',  # библиотека jazzmin — красоты админки невероятной для
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
