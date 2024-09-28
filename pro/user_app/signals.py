@@ -3,7 +3,7 @@ from django.dispatch import receiver
 from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
 
-from .models import Player
+from .models import Player, Backpack
 from pro.settings import DEFAULT_FROM_EMAIL
 
 
@@ -36,3 +36,10 @@ def massage_to_player(sender, instance, created, **kwargs):
 
         # Отправка письма
         player_message.send()
+
+
+# Автоматическое создание рюкзака при регистрации игрока
+@receiver(post_save, sender=Player)
+def create_player_backpack(sender, instance, created, **kwargs):
+    if created and not instance.is_staff:
+        Backpack.objects.create(player=instance)

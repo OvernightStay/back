@@ -9,4 +9,7 @@ urlpatterns = [
 	path('player/', views.PlayerViewSet.as_view(), name='player'),
  	path('password-reset/', views.PasswordResetRequestView.as_view(), name='password_reset_request'),
     path('password-reset-confirm/', views.PasswordResetConfirmView.as_view(), name='password_reset_confirm'),
+    path('item/', views.ItemViewSet.as_view()),
+    path('backpack/', views.BackpackViewSet.as_view()),
+    path('backpack_item/', views.BackpackItemViewSet.as_view()),
 ]

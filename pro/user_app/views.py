@@ -1,8 +1,8 @@
 from django.contrib.auth import authenticate, login as auth_login, logout
 from django.utils import timezone
+from rest_framework import permissions, status, generics
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework import permissions, status
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework.authentication import SessionAuthentication
@@ -117,6 +117,60 @@ class PasswordResetConfirmView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
+######### Для рюкзака: #########
+# Предметы
+class ItemViewSet(generics.ListCreateAPIView):
+    queryset = Item.objects.all()
+    serializer_class = ItemSerializer
+
+    def get_permissions(self):
+        if self.request.method == 'GET':
+            self.permission_classes = [permissions.AllowAny]
+        else:
+            self.permission_classes = [permissions.IsAdminUser]
+        return super().get_permissions()
+
+
+# Рюкзак
+class BackpackViewSet(generics.ListAPIView):
+    queryset = Backpack.objects.all()
+    serializer_class = BackpackSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        return Backpack.objects.filter(player=self.request.user)
+
+
+# Позиции предметов в рюкзаке
+class BackpackItemViewSet(generics.ListCreateAPIView):
+    serializer_class = BackpackItemSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    # Сохраняет рюкзак игрока
+    def get_serializer_context(self):
+        context = super().get_serializer_context()
+        backpack = Backpack.objects.get(player=self.request.user)
+        context.update({
+            'backpack': backpack,
+        })
+        return context
+
+    # Выдаются только позиции игрока
+    def get_queryset(self):
+        return BackpackItem.objects.filter(backpack__player=self.request.user)
+
+    def perform_create(self, serializer):
+        backpack = Backpack.objects.get(player=self.request.user)
+        item = serializer.validated_data['item']
+
+        # Проверка, существует ли уже предмет в рюкзаке
+        existing_item = BackpackItem.objects.filter(backpack=backpack, item=item).first()
+
+        if not existing_item:
+            # Создание нового элемента рюкзака
+            serializer.save(backpack=backpack)
+
+
 # class VerifyCodeViewSet(APIView):
 #     permission_classes = [permissions.AllowAny]
 
@@ -137,4 +191,3 @@ class PasswordResetConfirmView(APIView):
             
 #             return Response({'detail': 'Invalid or expired code'}, status=status.HTTP_400_BAD_REQUEST)
 #         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    

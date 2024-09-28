@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from django.contrib.auth import get_user_model
 from django.utils import timezone
+from .models import Item, Backpack, BackpackItem, Item
 
 Player = get_user_model()
 
@@ -103,3 +104,48 @@ class PasswordResetConfirmSerializer(serializers.Serializer):
             raise serializers.ValidationError("The code has expired.")
         
         return attrs
+
+
+######### Для рюкзака: #########
+# Предметы
+class ItemSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Item
+        fields = '__all__'
+
+
+# Позиции предметов в рюкзаке
+class BackpackItemSerializer(serializers.ModelSerializer):
+    item = serializers.PrimaryKeyRelatedField(queryset=Item.objects.all())
+    item_title = serializers.SerializerMethodField()
+    item_description = serializers.SerializerMethodField()
+    item_image = serializers.SerializerMethodField()
+
+    class Meta:
+        model = BackpackItem
+        fields = ['id', 'item', 'item_title', 'item_description', 'item_image']
+        read_only_fields = ['backpack']
+
+
+# Рюкзак
+class BackpackSerializer(serializers.ModelSerializer):
+    items = BackpackItemSerializer(many=True, source='backpackitem_set', read_only=True)
+    player = PlayerSerializer(read_only=True)
+
+    class Meta:
+        model = Backpack
+        fields = ['id', 'player', 'items', 'created_at']
+
+    # Добавление игрока в поле для создания его рюкзака
+    def create(self, validated_data):
+        player = self.context.get('player')
+        if player:
+            validated_data['player'] = player
+        return super().create(validated_data)
+
+    def validate(self, data):
+        player = self.context.get('player')
+        if Backpack.objects.filter(player=player).exists():
+            raise serializers.ValidationError("У вас уже есть рюкзак.")
+        return data
