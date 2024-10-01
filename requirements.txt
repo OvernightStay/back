@@ -8,11 +8,11 @@ djangorestframework-simplejwt==5.3.1
 drf-yasg==1.21.7
 inflection==0.5.1
 packaging==24.1
+pillow==10.4.0
 PyJWT==2.8.0
 python-decouple==3.8
 pytz==2024.1
 PyYAML==6.0.2
-setuptools==74.1.2
 sqlparse==0.5.1
 tzdata==2024.1
 uritemplate==4.1.1
