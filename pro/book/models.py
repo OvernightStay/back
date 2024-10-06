@@ -7,9 +7,9 @@ class Book(models.Model):
     text = FroalaField(verbose_name='Текст')
     slug = models.SlugField(max_length=255, unique=True, db_index=True, verbose_name="URL",
                             help_text="это поле заполняется автоматически")
-    image_start = models.ImageField(upload_to='image_start/', verbose_name='Изображение в начале', null=True,
+    image_start = models.ImageField(upload_to='media/image_start/', verbose_name='Изображение в начале', null=True,
                                     blank=True)
-    image_end = models.ImageField(upload_to='image_end/', verbose_name='Изображение в конце', null=True, blank=True)
+    image_end = models.ImageField(upload_to='media/image_end/', verbose_name='Изображение в конце', null=True, blank=True)
     date_add = models.DateTimeField(auto_now_add=True, verbose_name='Дата создания')
     date_update = models.DateTimeField(auto_now=True, verbose_name='Дата изменения')
 
