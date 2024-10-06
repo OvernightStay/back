@@ -1,9 +1,10 @@
 from django.db import models
+from froala_editor.fields import FroalaField
 
 
 class Book(models.Model):
     title = models.CharField(max_length=100, verbose_name='Глава')
-    text = models.TextField(verbose_name='Текст')
+    text = FroalaField(verbose_name='Текст')
     slug = models.SlugField(max_length=255, unique=True, db_index=True, verbose_name="URL",
                             help_text="это поле заполняется автоматически")
     image_start = models.ImageField(upload_to='image_start/', verbose_name='Изображение в начале', null=True,

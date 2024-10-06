@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     'corsheaders',
     'drf_yasg',  # документация REST API
     'book',
+    'froala_editor',
 ]
 
 # User model

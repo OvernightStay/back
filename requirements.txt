@@ -1,8 +1,12 @@
 asgiref==3.8.1
 Django==5.0.7
+django-autoslug==1.9.9
 django-cors-headers==4.4.0
+django-extensions-too==0.1.7
 django-filter==24.2
+django-froala-editor==4.3.0
 django-jazzmin==3.0.0
+django-js-asset==2.2.0
 djangorestframework==3.15.2
 djangorestframework-simplejwt==5.3.1
 drf-yasg==1.21.7
