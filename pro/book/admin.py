@@ -12,7 +12,7 @@ class BookAdmin(admin.ModelAdmin):
 
     fieldsets = (
         (None, {
-            'fields': ('title', 'text', 'slug', 'image_start', 'image_end')
+            'fields': ('title', 'text', 'slug')
         }),
         ('Даты', {
             'fields': ('date_add', 'date_update'),
