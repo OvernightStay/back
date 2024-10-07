@@ -50,6 +50,7 @@ INSTALLED_APPS = [
     'drf_yasg',  # документация REST API
     'book',
     'froala_editor',
+    'psychologist',
 ]
 
 # User model
