@@ -30,7 +30,7 @@ class RewardViewSet(viewsets.ModelViewSet):
 # from rest_framework import viewsets, status
 # from rest_framework.response import Response
 # from rest_framework.decorators import action
-# from .models import MiniNovella, MiniGame, PlayerProgress, Reward
+# from .models import MiniNovella, MiniGame, PsychoProgress, Reward
 # from .serializers import MiniNovellaSerializer, MiniGameSerializer, PlayerProgressSerializer, RewardSerializer
 # from user_app.models import Player
 #
@@ -49,7 +49,7 @@ class RewardViewSet(viewsets.ModelViewSet):
 #
 # # Представление для прогресса игрока
 # class PlayerProgressViewSet(viewsets.ModelViewSet):
-#     queryset = PlayerProgress.objects.all()
+#     queryset = PsychoProgress.objects.all()
 #     serializer_class = PlayerProgressSerializer
 #
 #     @action(detail=True, methods=['post'])

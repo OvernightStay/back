@@ -1,11 +1,6 @@
-from django.urls import path, include
-from rest_framework.routers import DefaultRouter
-from .views import QuestionViewSet, AnswerViewSet
-
-router = DefaultRouter()
-router.register(r'questions', QuestionViewSet)
-router.register(r'answers', AnswerViewSet)
+from django.urls import path
+from .views import QuestionDetailView
 
 urlpatterns = [
-    path('', include(router.urls)),
+    path('questions/<int:question_id>/', QuestionDetailView.as_view(), name='question-detail'),
 ]
