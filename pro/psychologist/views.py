@@ -1,8 +1,8 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework import status
+from rest_framework import status, viewsets
 from .models import Question, Answer, PsychoProgress
-from .serializers import QuestionSerializer
+from .serializers import QuestionSerializer, AnswerSerializer
 from django.shortcuts import get_object_or_404
 
 
@@ -57,3 +57,13 @@ class QuestionDetailView(APIView):
             return Response(serializer.data)
         else:
             return Response({"message": "Test completed"}, status=status.HTTP_200_OK)
+
+
+class QuestionViewSet(viewsets.ModelViewSet):
+    queryset = Question.objects.all()
+    serializer_class = QuestionSerializer
+
+
+class AnswerViewSet(viewsets.ModelViewSet):
+    queryset = Answer.objects.all()
+    serializer_class = AnswerSerializer
