@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Question, Answer
+from .models import Question, Answer, PsychoProgress
 
 
 class AnswerSerializer(serializers.ModelSerializer):
@@ -14,3 +14,9 @@ class QuestionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Question
         fields = ['id', 'text', 'answers']
+
+
+class PsychoProgressSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PsychoProgress
+        fields = '__all__'  # Или укажите конкретные поля

@@ -1,9 +1,15 @@
-from django.urls import path
+from django.urls import path, include
+from rest_framework.routers import DefaultRouter
+from .views import QuestionViewSet, AnswerViewSet, PsychoProgressViewSet
 
-from .views import QuestionDetailView, QuestionViewSet, AnswerViewSet
+# Создаем маршрутизатор и регистрируем наши ViewSet
+router = DefaultRouter()
+router.register(r'questions', QuestionViewSet, basename='question')
+router.register(r'answers', AnswerViewSet, basename='answer')
+router.register(r'progress', PsychoProgressViewSet, basename='psychoprogress')
 
+
+# Определяем urlpatterns
 urlpatterns = [
-    path('questions/<int:question_id>/', QuestionDetailView.as_view(), name='question-detail'),
-    path('questions/', QuestionViewSet.as_view({'get': 'list'})),
-    path('answers/', AnswerViewSet.as_view({'get': 'list'})),
+    path('', include(router.urls)),  # Включаем маршруты из роутера
 ]

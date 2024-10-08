@@ -1,21 +1,20 @@
-from rest_framework.views import APIView
+from rest_framework import viewsets, status
 from rest_framework.response import Response
-from rest_framework import status, viewsets
-from .models import Question, Answer, PsychoProgress
-from .serializers import QuestionSerializer, AnswerSerializer
 from django.shortcuts import get_object_or_404
+from .models import Question, PsychoProgress, Answer
+from .serializers import QuestionSerializer, AnswerSerializer, PsychoProgressSerializer
 
 
-class QuestionDetailView(APIView):
-    def get(self, request, question_id=None):
+class QuestionViewSet(viewsets.ViewSet):
+    def retrieve(self, request, pk=None):
         player = request.user  # Текущий игрок
 
         # Получаем прогресс игрока или создаём новый
         progress, created = PsychoProgress.objects.get_or_create(player=player, completed=False)
 
-        # Если указан question_id, проверяем его, иначе возвращаем текущий вопрос игрока
-        if question_id:
-            question = get_object_or_404(Question, id=question_id)
+        # Если указан pk (question_id), проверяем его, иначе возвращаем текущий вопрос игрока
+        if pk:
+            question = get_object_or_404(Question, id=pk)
         else:
             question = progress.current_question
 
@@ -25,12 +24,12 @@ class QuestionDetailView(APIView):
         serializer = QuestionSerializer(question)
         return Response(serializer.data)
 
-    def post(self, request, question_id):
+    def create(self, request, pk=None):
         player = request.user  # Текущий игрок
         progress = get_object_or_404(PsychoProgress, player=player, completed=False)
 
         try:
-            question = Question.objects.get(id=question_id)
+            question = Question.objects.get(id=pk)
         except Question.DoesNotExist:
             return Response({"error": "Question not found"}, status=status.HTTP_404_NOT_FOUND)
 
@@ -67,3 +66,24 @@ class QuestionViewSet(viewsets.ModelViewSet):
 class AnswerViewSet(viewsets.ModelViewSet):
     queryset = Answer.objects.all()
     serializer_class = AnswerSerializer
+
+
+class PsychoProgressViewSet(viewsets.ModelViewSet):
+    queryset = PsychoProgress.objects.all()
+    serializer_class = PsychoProgressSerializer
+
+    def get_queryset(self):
+        # Ограничим выборку только прогрессом текущего игрока
+        return self.queryset.filter(player=self.request.user)
+
+    def update(self, request, *args, **kwargs):
+        instance = self.get_object()
+        serializer = self.get_serializer(instance, data=request.data, partial=True)
+        serializer.is_valid(raise_exception=True)
+        self.perform_update(serializer)
+        return Response(serializer.data)
+
+    def create(self, request, *args, **kwargs):
+        # Позволим создавать только прогресс для текущего игрока
+        request.data['player'] = request.user.id
+        return super().create(request, *args, **kwargs)
