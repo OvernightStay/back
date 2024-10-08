@@ -1,31 +1,27 @@
 from django.contrib import admin
-from .models import Question, Answer, PsychoProgress
+from .models import Question, Answer, PlayerTestResult
 
 
+# Inline модель для вариантов ответов
 class AnswerInline(admin.TabularInline):
     model = Answer
-    extra = 2  # Позволяет добавлять сразу два варианта ответа
-    fields = ['text', 'is_first_option']
+    extra = 2  # Количество пустых полей для ответов при создании нового вопроса
+    fields = ('text', 'next_question')  # Поля, которые будут отображаться
+    fk_name = 'question'  # Указываем конкретное поле ForeignKey
 
-
+# Регистрация модели вопроса с inline-ответами
 @admin.register(Question)
 class QuestionAdmin(admin.ModelAdmin):
-    list_display = ['text', 'next_question_if_first_answer', 'next_question_if_second_answer']
-    inlines = [AnswerInline]  # Добавляем вариант ответа как инлайн
-    search_fields = ['text']
-    list_filter = ['next_question_if_first_answer', 'next_question_if_second_answer']
+    list_display = ('text', 'answer_type')  # Отображаем текст вопроса и тип ответа
+    inlines = [AnswerInline]  # Добавляем inline-модель для ответов
 
 
+# Регистрация модели ответов (если нужно отдельно редактировать)
 @admin.register(Answer)
 class AnswerAdmin(admin.ModelAdmin):
-    list_display = ['text', 'question', 'is_first_option']
-    list_filter = ['is_first_option', 'question']
-    search_fields = ['text', 'question__text']
+    list_display = ('text', 'question', 'next_question')  # Поля, которые будут отображаться в списке ответов
 
 
-@admin.register(PsychoProgress)
-class PlayerProgressAdmin(admin.ModelAdmin):
-    list_display = ['player', 'current_question', 'completed']
-    list_filter = ['completed', 'player']
-    search_fields = ['player__login', 'current_question__text']
-    filter_horizontal = ['selected_answers']
+@admin.register(PlayerTestResult)
+class PlayerTestResultAdmin(admin.ModelAdmin):
+    list_display = ('player', 'question', 'answer', 'completed_at')

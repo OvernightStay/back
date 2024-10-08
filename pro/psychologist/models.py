@@ -1,34 +1,33 @@
 from django.db import models
-from django.conf import settings
+
+from user_app.models import Player  # Импорт модели Player
 
 
 class Question(models.Model):
     text = models.CharField(max_length=255)
-    next_question_if_first_answer = models.ForeignKey(
-        'self', on_delete=models.SET_NULL, null=True, blank=True, related_name='first_answer_next_question'
-    )
-    next_question_if_second_answer = models.ForeignKey(
-        'self', on_delete=models.SET_NULL, null=True, blank=True, related_name='second_answer_next_question'
-    )
+    answer_type = models.CharField(max_length=50,
+                                   choices=[('single', 'Single Choice'), ('multiple', 'Multiple Choice')])
+    player = models.ForeignKey(Player, on_delete=models.CASCADE, related_name="questions")  # Связь с игроком
 
     def __str__(self):
         return self.text
 
 
 class Answer(models.Model):
-    question = models.ForeignKey(Question, on_delete=models.CASCADE, related_name='answers')
+    question = models.ForeignKey(Question, related_name='answers', on_delete=models.CASCADE)
     text = models.CharField(max_length=255)
-    is_first_option = models.BooleanField(default=True)  # для отслеживания, это первый или второй вариант
+    next_question = models.ForeignKey(Question, null=True, blank=True, related_name='next_questions',
+                                      on_delete=models.SET_NULL)
 
     def __str__(self):
-        return f"Answer: {self.text} (Question: {self.question.text})"
+        return self.text
 
 
-class PsychoProgress(models.Model):
-    player = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='psychologist_progress')
-    current_question = models.ForeignKey(Question, on_delete=models.SET_NULL, null=True, blank=True)
-    selected_answers = models.ManyToManyField(Answer, blank=True, related_name='player_answers')
-    completed = models.BooleanField(default=False)
+class PlayerTestResult(models.Model):
+    player = models.ForeignKey(Player, on_delete=models.CASCADE, related_name="test_results")
+    question = models.ForeignKey(Question, on_delete=models.CASCADE)
+    answer = models.ForeignKey(Answer, on_delete=models.CASCADE)
+    completed_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f"Progress of {self.player.login} | Current Question: {self.current_question.text if self.current_question else 'None'}"
+        return f"Player: {self.player.login} | Question: {self.question.text} | Answer: {self.answer.text}"
