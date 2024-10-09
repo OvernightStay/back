@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Результаты вашего психологического теста</title>
+</head>
+<body>
+    <h2>Здравствуйте, {{ player.first_name }} {{ player.last_name }}!</h2>
+    <p>Вы завершили тест. Вот ваши результаты:</p>
+
+    <ul>
+        {% for answer in answers %}
+            <li><strong>{{ answer.question.text }}</strong>: {{ answer.text }}</li>
+        {% endfor %}
+    </ul>
+
+    <p>Спасибо, что приняли участие в тесте!</p>
+</body>
+</html>
