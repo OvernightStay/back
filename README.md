@@ -71,6 +71,8 @@ python manage.py runserver
 Аргументы:
 * ```first_name```
 * ```last_name```
+* ```username```
+* ```login```
 * ```phone```
 * ```email```
 * ```gender```
