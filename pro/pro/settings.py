@@ -28,7 +28,7 @@ SECRET_KEY = 'django-insecure-^telm$es(!j#w5^o62yow74bofn+ttu*5hg-l^515l(de@6+32
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['127.0.0.1', 'localhost']
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost', 'overnightapp.pythonanywhere.com']
 
 
 # Application definition
@@ -78,11 +78,11 @@ REST_FRAMEWORK = {
         'rest_framework.permissions.IsAuthenticated',
     ],
     'DEFAULT_AUTHENTICATION_CLASSES': [
-        'rest_framework.authentication.SessionAuthentication',
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ],
     'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend']
 }
+
 
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(days=1),
@@ -103,6 +103,8 @@ SIMPLE_JWT = {
 }
 
 CORS_ORIGIN_ALLOW_ALL = True
+
+CSRF_TRUSTED_ORIGINS = ["*"]
 
 ROOT_URLCONF = 'pro.urls'
 
@@ -170,7 +172,15 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
 
-STATIC_URL = '/static/'
+# Директория для хранения статических файлов  
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')  
+# URL, по которому будут доступны статические файлы  
+STATIC_URL = '/static/'  
+# Дополнительные каталоги для поиска статических файлов  
+STATICFILES_DIRS = [  
+    os.path.join(BASE_DIR, 'static'),  
+]
+
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field

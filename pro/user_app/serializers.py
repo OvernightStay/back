@@ -48,7 +48,7 @@ class PlayerSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = Player
-        fields = ['id', 'login', 'email', 'phone', 'first_name', 'last_name', 'gender', 'training_check', 'current_password', 'new_password']
+        fields = ['id', 'username', 'login', 'email', 'phone', 'first_name', 'last_name', 'gender', 'training_check', 'current_password', 'new_password']
 
     def validate_login(self, value):
         if Player.objects.filter(login=value).exclude(id=self.instance.id).exists():
