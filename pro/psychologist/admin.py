@@ -1,27 +1,74 @@
+import csv
+from django.http import HttpResponse
 from django.contrib import admin
-from .models import Question, Answer, PlayerTestResult
+from .models import Question, Answer, TestProgress
 
 
-# Inline модель для вариантов ответов
+# Инлайн-редактирование ответов внутри вопросов
 class AnswerInline(admin.TabularInline):
     model = Answer
-    extra = 2  # Количество пустых полей для ответов при создании нового вопроса
-    fields = ('text', 'next_question')  # Поля, которые будут отображаться
-    fk_name = 'question'  # Указываем конкретное поле ForeignKey
+    extra = 2  # Количество пустых строк для добавления новых ответов
+    min_num = 2  # Минимум 2 ответа для каждого вопроса
+    max_num = 2  # Максимум 2 ответа для каждого вопроса
+    fields = ['number', 'text']  # Поля для отображенxия
 
-# Регистрация модели вопроса с inline-ответами
+
+# Функция экспорта в CSV
+def export_to_csv(modeladmin, request, queryset):
+    # Определяем заголовки для CSV файла
+    meta = modeladmin.model._meta
+    field_names = [field.name for field in meta.fields]
+
+    # Создаем HTTP-ответ с указанием заголовка для скачивания файла
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = f'attachment; filename={meta}.csv'
+
+    # Пишем данные в CSV-файл
+    writer = csv.writer(response)
+    writer.writerow(field_names)  # Записываем заголовки столбцов
+
+    # Записываем строки данных
+    for obj in queryset:
+        writer.writerow([getattr(obj, field) for field in field_names])
+
+    return response
+
+
+# Название и описание экшена для админки
+export_to_csv.short_description = 'Export to CSV'
+
+
+# Админка для вопросов
 @admin.register(Question)
 class QuestionAdmin(admin.ModelAdmin):
-    list_display = ('text', 'answer_type')  # Отображаем текст вопроса и тип ответа
-    inlines = [AnswerInline]  # Добавляем inline-модель для ответов
+    list_display = ('question_number', 'text')  # Поля для отображения в списке
+    search_fields = ('text',)  # Поле для поиска
+    inlines = [AnswerInline]  # Включаем инлайн-редактирование ответов
+    ordering = ['question_number']  # Упорядочивание по номеру вопроса
+    # readonly_fields = ['question_number']  # Номер вопроса присваивается автоматически
+
+    # Добавляем action для экспорта
+    actions = [export_to_csv]
 
 
-# Регистрация модели ответов (если нужно отдельно редактировать)
+# Админка для прогресса тестов
+@admin.register(TestProgress)
+class TestProgressAdmin(admin.ModelAdmin):
+    list_display = ('player', 'question', 'selected_answer', 'completed_at')  # Поля для отображения
+    list_filter = ('player', 'completed_at')  # Фильтры для игроков и даты прохождения
+    search_fields = ('player__login', 'question__text')  # Поля для поиска по логину игрока и тексту вопроса
+    autocomplete_fields = ['player', 'question',
+                           'selected_answer']  # Автозаполнение при выборе игрока, вопроса и ответа
+    ordering = ['-completed_at']  # Сортировка по дате прохождения
+
+    # Добавляем action для экспорта
+    actions = [export_to_csv]
+
+
+# Регистрация модели Answer в админ-панели
 @admin.register(Answer)
 class AnswerAdmin(admin.ModelAdmin):
-    list_display = ('text', 'question', 'next_question')  # Поля, которые будут отображаться в списке ответов
-
-
-@admin.register(PlayerTestResult)
-class PlayerTestResultAdmin(admin.ModelAdmin):
-    list_display = ('player', 'question', 'answer', 'completed_at')
+    list_display = ('number', 'text', 'question')  # Отображаемые поля в списке объектов
+    list_filter = ('question',)  # Фильтры в правой панели
+    search_fields = ('text', 'question__text')  # Поля для поиска
+    ordering = ('number',)  # Сортировка по умолчанию
