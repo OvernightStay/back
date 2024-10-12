@@ -1,32 +1,44 @@
 from rest_framework import serializers
-from .models import Question, Answer, TestProgress
+from .models import Question, Answer, QuestionProgress
 
 
 class AnswerSerializer(serializers.ModelSerializer):
     class Meta:
         model = Answer
-        fields = ['id', 'text', 'number']
+        fields = ['id', 'text', 'number']  # Поля, которые будут отображены в API
 
 
 class QuestionSerializer(serializers.ModelSerializer):
-    answers = AnswerSerializer(many=True)  # Включаем список ответов
-    question_number = serializers.ReadOnlyField()  # Поле для уникального номера вопроса
+    answers = AnswerSerializer(many=True, read_only=True)  # Вложенные ответы
 
     class Meta:
         model = Question
-        fields = ['id', 'text', 'question_number', 'answers']
-        read_only_fields = ['question_number']  # Номер вопроса присваивается автоматически
-
-    def create(self, validated_data):
-        answers_data = validated_data.pop('answers')
-        question = Question.objects.create(**validated_data)
-        for answer_data in answers_data:
-            Answer.objects.create(question=question, **answer_data)
-        return question
+        fields = ['id', 'text', 'question_number', 'answers']  # Поля для отображения в API
 
 
-class TestProgressSerializer(serializers.ModelSerializer):
+class QuestionProgressSerializer(serializers.ModelSerializer):
+    player = serializers.StringRelatedField()  # Отображение игрока как строки
+    question = QuestionSerializer()  # Вложенный сериализатор вопроса
+    selected_answer = AnswerSerializer()  # Вложенный сериализатор выбранного ответа
+
     class Meta:
-        model = TestProgress
-        fields = ['id', 'player', 'question', 'selected_answer', 'completed_at']
-        read_only_fields = ['completed_at']
+        model = QuestionProgress
+        fields = ['id', 'player', 'question', 'selected_answer']  # Поля для отображения в API
+
+
+class QuestionProgressCreateSerializer(serializers.ModelSerializer):
+    """Сериализатор для создания прогресса вопроса"""
+
+    class Meta:
+        model = QuestionProgress
+        fields = ['id', 'player', 'question', 'selected_answer']
+
+    def validate(self, data):
+        # Проверка на то, что выбранный ответ относится к заданному вопросу
+        selected_answer = data.get('selected_answer')
+        question = data.get('question')
+
+        if selected_answer and selected_answer.question != question:
+            raise serializers.ValidationError("Выбранный ответ не относится к данному вопросу.")
+
+        return data
