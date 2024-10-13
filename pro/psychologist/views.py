@@ -9,6 +9,11 @@ from .serializers import (
     QuestionProgressSerializer,
     QuestionProgressCreateSerializer
 )
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
+from user_app.models import Player  # Импорт модели игрока
+from .utils import send_test_results  # Импорт функции отправки email
 
 
 class QuestionViewSet(viewsets.ReadOnlyModelViewSet):
@@ -61,3 +66,20 @@ class QuestionProgressViewSet(viewsets.ModelViewSet):
         progress = QuestionProgress.objects.filter(player_id=player_id).select_related('question', 'selected_answer')
         serializer = self.get_serializer(progress, many=True)
         return Response(serializer.data)
+
+
+class SendTestResultsView(APIView):
+
+    def post(self, request, player_id):
+        try:
+            # Получаем игрока по переданному ID
+            player = Player.objects.get(id=player_id)
+
+            # Отправляем результаты теста на email администратора
+            send_test_results(player)
+
+            return Response({"message": "Результаты теста отправлены на почту администратора."},
+                            status=status.HTTP_200_OK)
+
+        except Player.DoesNotExist:
+            return Response({"error": "Игрок не найден."}, status=status.HTTP_404_NOT_FOUND)
