@@ -41,3 +41,18 @@ class QuestionProgress(models.Model):
 
     def __str__(self):
         return f"{self.player}: {self.question} - {self.selected_answer}"
+
+
+class TestResult(models.Model):
+    player = models.ForeignKey(Player, on_delete=models.CASCADE, verbose_name='Игрок')
+    question = models.ForeignKey(Question, on_delete=models.CASCADE, verbose_name='Вопрос')
+    selected_answer = models.ForeignKey(Answer, null=True, blank=True, on_delete=models.SET_NULL,
+                                        verbose_name='Выбранный ответ')
+    completed_at = models.DateTimeField(auto_now_add=True, verbose_name='Дата завершения')
+
+    class Meta:
+        verbose_name = 'Результат теста'
+        verbose_name_plural = 'Результаты тестов'
+
+    def __str__(self):
+        return f"Игрок: {self.player}, Вопрос: {self.question}, Ответ: {self.selected_answer}"

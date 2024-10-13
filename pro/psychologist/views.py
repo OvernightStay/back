@@ -75,10 +75,10 @@ class SendTestResultsView(APIView):
             # Получаем игрока по переданному ID
             player = Player.objects.get(id=player_id)
 
-            # Отправляем результаты теста на email администратора
+            # Отправляем результаты теста на email администратора и сохраняем в базу
             send_test_results(player)
 
-            return Response({"message": "Результаты теста отправлены на почту администратора."},
+            return Response({"message": "Результаты теста отправлены и сохранены в системе."},
                             status=status.HTTP_200_OK)
 
         except Player.DoesNotExist:

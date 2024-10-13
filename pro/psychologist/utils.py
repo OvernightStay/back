@@ -1,6 +1,19 @@
 from django.core.mail import send_mail
 from django.conf import settings
-from .models import QuestionProgress
+from .models import QuestionProgress, TestResult
+
+
+def save_test_results(player):
+    # Получаем все прогрессы вопросов для игрока
+    question_progresses = QuestionProgress.objects.filter(player=player)
+
+    # Сохраняем каждый результат в модель TestResult
+    for progress in question_progresses:
+        TestResult.objects.create(
+            player=player,
+            question=progress.question,
+            selected_answer=progress.selected_answer
+        )
 
 
 def send_test_results(player):
@@ -21,3 +34,6 @@ def send_test_results(player):
         recipient_list=[settings.ADMIN_EMAIL],
         fail_silently=False,
     )
+
+    # Сохраняем результаты в базу данных
+    save_test_results(player)

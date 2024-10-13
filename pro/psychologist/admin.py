@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Question, Answer, QuestionProgress
+from .models import Question, Answer, QuestionProgress, TestResult
 
 
 class AnswerInline(admin.TabularInline):
@@ -27,3 +27,10 @@ class QuestionProgressAdmin(admin.ModelAdmin):
     list_display = ('player', 'question', 'selected_answer')  # Поля для отображения в списке прогресса
     list_filter = ('player', 'question')  # Фильтры по игроку и вопросу
     search_fields = ('player__username', 'question__text')  # Поиск по игроку и тексту вопроса
+
+
+@admin.register(TestResult)
+class TestResultAdmin(admin.ModelAdmin):
+    list_display = ('player', 'question', 'selected_answer', 'completed_at')
+    list_filter = ('player', 'completed_at')
+    search_fields = ('player__username', 'question__text')
