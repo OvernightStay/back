@@ -103,7 +103,7 @@ SIMPLE_JWT = {
 
 CORS_ORIGIN_ALLOW_ALL = True
 
-CSRF_TRUSTED_ORIGINS = ["*"]
+CSRF_TRUSTED_ORIGINS = ["https://overnightapp.pythonanywhere.com/"]
 
 ROOT_URLCONF = 'pro.urls'
 
@@ -174,10 +174,10 @@ USE_TZ = True
 # Директория для хранения статических файлов  
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')  
 # URL, по которому будут доступны статические файлы  
-STATIC_URL = '/static/'  
+STATIC_URL = '/staticfiles/'
 # Дополнительные каталоги для поиска статических файлов  
 STATICFILES_DIRS = [  
-    os.path.join(BASE_DIR, 'static'),  
+    os.path.join(BASE_DIR, 'static'),
 ]
 
 
