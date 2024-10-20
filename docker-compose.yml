@@ -34,6 +34,7 @@ services:
     volumes:
       - ./pro:/app:rw
       - static_volume:/static
+      - ./pro/media:/media
     expose:
       - "8000"
     command: ["gunicorn", "--bind", "0.0.0.0:8000", "pro.wsgi:application"]
@@ -47,7 +48,9 @@ services:
       - "80:80"
     volumes:
       - static_volume:/static
-      - ./pro/nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./pro/media:/media:ro
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/servers:/etc/nginx/servers:ro
     restart: always
 
 volumes:

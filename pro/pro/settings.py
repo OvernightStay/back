@@ -182,10 +182,10 @@ STATIC_URL = '/static/'
 # Директория для хранения статических файлов
 STATIC_ROOT = '/static/'
 
-# Дополнительные каталоги для поиска статических файлов
-STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'static'),
-]
+# # Дополнительные каталоги для поиска статических файлов
+# STATICFILES_DIRS = [
+#     os.path.join(BASE_DIR, 'static'),
+# ]
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'

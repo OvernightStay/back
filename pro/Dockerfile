@@ -41,8 +41,8 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Копируем всё приложение из директории pro/
 COPY pro/ /app/
 
-# Копируем скрипт entrypoint из корня проекта в корневую директорию контейнера
-COPY entrypoint.sh /entrypoint.sh
+# Копируем скрипт entrypoint из директории pro/ в корневую директорию контейнера
+COPY pro/entrypoint.sh /entrypoint.sh
 
 # Делаем скрипт исполняемым
 RUN chmod +x /entrypoint.sh
