@@ -23,38 +23,37 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-^telm$es(!j#w5^o62yow74bofn+ttu*5hg-l^515l(de@6+32'
+SECRET_KEY = "django-insecure-^telm$es(!j#w5^o62yow74bofn+ttu*5hg-l^515l(de@6+32"
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['127.0.0.1', 'localhost']
+ALLOWED_HOSTS = ["127.0.0.1", "localhost", "overnightapp.pythonanywhere.com", "*"]
 
 
 # Application definition
 
 INSTALLED_APPS = [
     # 'jazzmin',  # библиотека jazzmin — красоты админки невероятной для
-    'django.contrib.admin',
-    'django.contrib.auth',
-    'django.contrib.contenttypes',
-    'django.contrib.sessions',
-    'django.contrib.messages',
-    'django.contrib.staticfiles',
+    "django.contrib.admin",
+    "django.contrib.auth",
+    "django.contrib.contenttypes",
+    "django.contrib.sessions",
+    "django.contrib.messages",
+    "django.contrib.staticfiles",
     # подключаем доп приложения
-    'user_app',
-    'mini_location_app',
-    'rest_framework',
-    'rest_framework_simplejwt',
-    'corsheaders',
-    'drf_yasg',  # документация REST API
-    'book',
-    'froala_editor',
-    'psychologist',
+    "user_app",
+    "mini_location_app",
+    "rest_framework",
+    "rest_framework_simplejwt",
+    "corsheaders",
+    "drf_yasg",  # документация REST API
+    "book",
+    "froala_editor",
 ]
 
 # User model
-AUTH_USER_MODEL = 'user_app.Player'
+AUTH_USER_MODEL = "user_app.Player"
 
 # AUTHENTICATION_BACKENDS = (
 #     'user_app.authentication.LoginBackend',
@@ -62,76 +61,83 @@ AUTH_USER_MODEL = 'user_app.Player'
 # )
 
 MIDDLEWARE = [
-    'django.middleware.security.SecurityMiddleware',
-    'django.contrib.sessions.middleware.SessionMiddleware',
-    'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
-    'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'django.contrib.messages.middleware.MessageMiddleware',
-    'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'corsheaders.middleware.CorsMiddleware',
+    "django.middleware.security.SecurityMiddleware",
+    "django.contrib.sessions.middleware.SessionMiddleware",
+    "django.middleware.common.CommonMiddleware",
+    "django.middleware.csrf.CsrfViewMiddleware",
+    "django.contrib.auth.middleware.AuthenticationMiddleware",
+    "django.contrib.messages.middleware.MessageMiddleware",
+    "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "corsheaders.middleware.CorsMiddleware",
 ]
 
 # Настройки Rest Framework
 REST_FRAMEWORK = {
-    'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.IsAuthenticated',
+    "DEFAULT_PERMISSION_CLASSES": [
+        "rest_framework.permissions.IsAuthenticated",
     ],
-    'DEFAULT_AUTHENTICATION_CLASSES': [
-        'rest_framework.authentication.SessionAuthentication',
-        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    "DEFAULT_AUTHENTICATION_CLASSES": [
+        "rest_framework_simplejwt.authentication.JWTAuthentication",
     ],
-    'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend']
+    "DEFAULT_FILTER_BACKENDS": ["django_filters.rest_framework.DjangoFilterBackend"],
 }
 
+
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(days=1),
-    'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
-    'ROTATE_REFRESH_TOKENS': True,
-    'BLACKLIST_AFTER_ROTATION': True,
-    'ALGORITHM': 'HS256',
-    'SIGNING_KEY': SECRET_KEY,
-    'VERIFYING_KEY': None,
-    'AUDIENCE': None,
-    'ISSUER': None,
-    'AUTH_HEADER_TYPES': ('Bearer',),
-    'USER_ID_FIELD': 'id',
-    'USER_ID_CLAIM': 'user_id',
-    'AUTH_TOKEN_CLASSES': ('rest_framework_simplejwt.tokens.AccessToken',),
-    'TOKEN_TYPE_CLAIM': 'token_type',
-    'JTI_CLAIM': 'jti',
+    "ACCESS_TOKEN_LIFETIME": timedelta(days=1),
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
+    "ROTATE_REFRESH_TOKENS": True,
+    "BLACKLIST_AFTER_ROTATION": True,
+    "ALGORITHM": "HS256",
+    "SIGNING_KEY": SECRET_KEY,
+    "VERIFYING_KEY": None,
+    "AUDIENCE": None,
+    "ISSUER": None,
+    "AUTH_HEADER_TYPES": ("Bearer",),
+    "USER_ID_FIELD": "id",
+    "USER_ID_CLAIM": "user_id",
+    "AUTH_TOKEN_CLASSES": ("rest_framework_simplejwt.tokens.AccessToken",),
+    "TOKEN_TYPE_CLAIM": "token_type",
+    "JTI_CLAIM": "jti",
 }
 
 CORS_ORIGIN_ALLOW_ALL = True
 
-ROOT_URLCONF = 'pro.urls'
+CSRF_TRUSTED_ORIGINS = ["https://overnightapp.pythonanywhere.com/"]
+
+ROOT_URLCONF = "pro.urls"
 
 TEMPLATES = [
     {
-        'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR, 'templates')],
-        'APP_DIRS': True,
-        'OPTIONS': {
-            'context_processors': [
-                'django.template.context_processors.debug',
-                'django.template.context_processors.request',
-                'django.contrib.auth.context_processors.auth',
-                'django.contrib.messages.context_processors.messages',
+        "BACKEND": "django.template.backends.django.DjangoTemplates",
+        "DIRS": [os.path.join(BASE_DIR, "templates")],
+        "APP_DIRS": True,
+        "OPTIONS": {
+            "context_processors": [
+                "django.template.context_processors.debug",
+                "django.template.context_processors.request",
+                "django.contrib.auth.context_processors.auth",
+                "django.contrib.messages.context_processors.messages",
             ],
         },
     },
 ]
 
-WSGI_APPLICATION = 'pro.wsgi.application'
+WSGI_APPLICATION = "pro.wsgi.application"
 
 
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
+# База данных
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+    "default": {
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": config("DB_NAME"),
+        "USER": config("DB_USER"),
+        "PASSWORD": config("DB_PASSWORD"),
+        "HOST": "db",
+        "PORT": 5432,
     }
 }
 
@@ -141,16 +147,16 @@ DATABASES = {
 
 AUTH_PASSWORD_VALIDATORS = [
     {
-        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
+        "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
+        "NAME": "django.contrib.auth.password_validation.MinimumLengthValidator",
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
+        "NAME": "django.contrib.auth.password_validation.CommonPasswordValidator",
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
+        "NAME": "django.contrib.auth.password_validation.NumericPasswordValidator",
     },
 ]
 
@@ -158,9 +164,9 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/5.0/topics/i18n/
 
-LANGUAGE_CODE = 'ru'
+LANGUAGE_CODE = "ru"
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = "UTC"
 
 USE_I18N = True
 
@@ -170,22 +176,37 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
 
-STATIC_URL = '/static/'
+
+# URL, по которому будут доступны статические файлы
+STATIC_URL = "/static/"
+
+# Директория для хранения статических файлов
+STATIC_ROOT = "/static/"
+
+# # Дополнительные каталоги для поиска статических файлов
+# STATICFILES_DIRS = [
+#     os.path.join(BASE_DIR, 'static'),
+# ]
+
+
+MEDIA_ROOT = os.path.join(BASE_DIR, "media")
+MEDIA_URL = "/media/"
+
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
-DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 # Настройки для отправки почты
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 EMAIL_USE_SSL = False
 EMAIL_USE_TLS = True
-EMAIL_HOST = config('EMAIL_HOST')
-EMAIL_PORT = config('EMAIL_PORT')
-EMAIL_HOST_USER = config('EMAIL_HOST_USER')
-EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')
-DEFAULT_FROM_EMAIL = config('DEFAULT_FROM_EMAIL')
+EMAIL_HOST = config("EMAIL_HOST")
+EMAIL_PORT = config("EMAIL_PORT")
+EMAIL_HOST_USER = config("EMAIL_HOST_USER")
+EMAIL_HOST_PASSWORD = config("EMAIL_HOST_PASSWORD")
+DEFAULT_FROM_EMAIL = config("DEFAULT_FROM_EMAIL")
 
 APSCHEDULER_DATETIME_FORMAT = "N j, Y, f:s a"
 
@@ -196,19 +217,15 @@ APSCHEDULER_DATETIME_FORMAT = "N j, Y, f:s a"
 JAZZMIN_SETTINGS = {
     # заголовок окна (по умолчанию будет current_admin_site.site_title, если он отсутствует или отсутствует)
     "site_title": "Ночлежка Admin",
-
     # Заголовок на экране входа в систему (максимум 19 символов) (по умолчанию — current_admin_site.site_header,
     # если он отсутствует или отсутствует)
     "site_header": "Ночлежка",
-
     # Название бренда (максимум 19 символов) (по умолчанию current_admin_site.site_header,
     # если оно отсутствует или отсутствует)
     "site_brand": "Ночлежка",
-
     # # Название бренда (максимум 19 символов) (по умолчанию current_admin_site.site_header,
     # # если оно отсутствует или отсутствует)
     # "site_logo": "/logo.png",
-
     # # Логотип, используемый для вашего сайта, должен присутствовать в статических файлах,
     # # используется для логотипа формы входа (по умолчанию site_logo)
     # "login_logo": None,
@@ -218,30 +235,23 @@ JAZZMIN_SETTINGS = {
     #
     # # Классы CSS, которые применяются к логотипу выше
     # "site_logo_classes": "img-circle",
-
     # # Относительный путь к значку вашего сайта, по умолчанию будет site_logo,
     # # если он отсутствует (в идеале 32x32 пикселей).
     # "site_icon": None,
-
     # Текст приветствия на экране входа в систему
     "welcome_sign": "Добро пожаловать в «Ночлежку»!",
-
     # Авторские права в нижнем колонтитуле
     "copyright": "TOXIC TEAM",
-
     # # Список администраторов модели для поиска из панели поиска, панель поиска опускается, если она исключена
     # # Если вы хотите использовать одно поле поиска, вам не нужно использовать список,
     # # вы можете использовать простую строку
     # "search_model": ["auth.User", "auth.Group"],
-
     # Имя поля в модели пользователя, которое содержит аватар ImageField/URLField/Charfield или вызываемый объект,
     # который получает пользователя
     # "user_avatar": None,
-
     ############
     # Top Menu #
     ############
-
     # # Ссылки для размещения в верхнем меню
     # "topmenu_links": [
     #
@@ -257,38 +267,30 @@ JAZZMIN_SETTINGS = {
     #     # App with dropdown menu to all its models pages (Permissions checked against models)
     #     {"app": "books"},
     # ],
-
     #############
     # User Menu #
     #############
-
     # # Дополнительные ссылки для включения в меню пользователя в правом верхнем углу
     # # (тип URL-адреса «приложение» не разрешен)
     # "usermenu_links": [
     #     {"name": "Support", "url": "https://github.com/farridav/django-jazzmin/issues", "new_window": True},
     #     {"model": "auth.user"}
     # ],
-
     #############
     # Side Menu #
     #############
-
     # Отображать ли боковое меню
     "show_sidebar": True,
-
     # Стоит ли автоматически расширять меню
     "navigation_expanded": True,
-
     # # Скрыть эти приложения при создании бокового меню, например (аутентификация)
     # "hide_apps": [],
     #
     # # Скрыть эти модели при создании бокового меню (например, auth.user)
     # "hide_models": [],
-
     # # Список приложений (и/или моделей) для заказа в базовом боковом меню
     # # (не обязательно содержать все приложения/модели)
     # "order_with_respect_to": ["auth", "books", "books.author", "books.book"],
-
     # # Пользовательские ссылки для добавления в группы приложений, привязанные к названию приложения.
     # "custom_links": {
     #     "books": [{
@@ -298,7 +300,6 @@ JAZZMIN_SETTINGS = {
     #         "permissions": ["books.view_book"]
     #     }]
     # },
-
     # # Пользовательские значки для приложений/моделей бокового меню.
     # # См. https://fontawesome.com/icons?d=gallery&m=free&v=5.0.0,5.0.1,5.0.10,5.0.11,5.0.12,5.0.13, 5.0.2,5.0.3,5.0.4,5.0.5,5.0.6,5.0.7,5.0.8,5.0.9,5.1.0,5.1.1,5.2.0,5.3.0,5.3. 1,5.4.0,5.4.1,5.4.2,5.13.0,5.12.0,5.11.2,5.11.1,5.10.0,5.9.0,5.8.2,5.8.1,5.7.2, 5.7.1,5.7.0,5.6.3,5.5.0,5.4.2
     # # для получения полного списка бесплатных классов значков версии 5.13.0
@@ -310,13 +311,11 @@ JAZZMIN_SETTINGS = {
     # # Значки, которые используются, если они не указаны вручную
     # "default_icon_parents": "fas fa-chevron-circle-right",
     # "default_icon_children": "fas fa-circle",
-
     #################
     # Related Modal #
     #################
     # Используйте модальные окна вместо всплывающих окон (False по умолчанию)
     # "related_modal_active": True,
-
     #############
     # UI Tweaks #
     #############
@@ -327,7 +326,6 @@ JAZZMIN_SETTINGS = {
     # "use_google_fonts_cdn": True,
     # Показывать ли настройщик пользовательского интерфейса на боковой панели
     "show_ui_builder": False,
-
     ###############
     # Change view #
     ###############
@@ -350,9 +348,9 @@ JAZZMIN_SETTINGS = {
     # "language_chooser": True,
 }
 
-'''
+"""
 Настройки темы JAZZMIN — админка
-'''
+"""
 
 JAZZMIN_UI_TWEAKS = {
     "navbar_small_text": False,
@@ -382,7 +380,7 @@ JAZZMIN_UI_TWEAKS = {
         "info": "btn-info",
         "warning": "btn-warning",
         "danger": "btn-danger",
-        "success": "btn-success"
+        "success": "btn-success",
     },
-    "actions_sticky_top": True
+    "actions_sticky_top": True,
 }
