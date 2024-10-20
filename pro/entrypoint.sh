@@ -1,11 +1,12 @@
 #!/bin/sh
 
-# Ожидание базы данных
-echo "Waiting for postgres..."
-while ! nc -z db 5432; do
+# Ожидание запуска базы данных
+echo "Waiting for postgres to start..."
+while ! pg_isready -h db -p 5432 -q; do
+  >&2 echo "Postgres is unavailable - sleeping"
   sleep 5
 done
-echo "PostgreSQL started"
+echo "Postgres is ready"
 
 # Выполнение миграций
 python manage.py migrate --noinput
