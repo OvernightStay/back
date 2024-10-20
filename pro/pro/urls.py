@@ -24,6 +24,7 @@ urlpatterns = [
     path("", include("user_app.urls")),
     path("api/", include("mini_location_app.urls")),
     path("book/", include("book.urls")),
+    path("psychologist/", include("psychologist.urls")),
     path(
         "swagger/",
         schema_view.with_ui("swagger", cache_timeout=0),
