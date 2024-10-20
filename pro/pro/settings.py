@@ -131,13 +131,13 @@ WSGI_APPLICATION = "pro.wsgi.application"
 
 # База данных
 DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.postgresql",
-        "NAME": config("DB_NAME"),
-        "USER": config("DB_USER"),
-        "PASSWORD": config("DB_PASSWORD"),
-        "HOST": "db",
-        "PORT": 5432,
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': config('DB_NAME'),
+        'USER': config('DB_USER'),
+        'PASSWORD': config('DB_PASSWORD'),
+        'HOST': 'db',
+        'PORT': 5432,
     }
 }
 
@@ -178,10 +178,10 @@ USE_TZ = True
 
 
 # URL, по которому будут доступны статические файлы
-STATIC_URL = "/static/"
+STATIC_URL = '/static/'
 
 # Директория для хранения статических файлов
-STATIC_ROOT = "/static/"
+STATIC_ROOT = '/static/'
 
 # # Дополнительные каталоги для поиска статических файлов
 # STATICFILES_DIRS = [
