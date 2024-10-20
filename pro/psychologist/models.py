@@ -1,10 +1,10 @@
 from django.db import models
-from user_app.models import Player
+from user_app.models import Player  # Импорт модели Player
 
 
 class Question(models.Model):
     text = models.CharField(max_length=255)
-    question_number = models.PositiveIntegerField(unique=True)
+    question_number = models.PositiveIntegerField(unique=True)  # Убрано значение по умолчанию
 
     class Meta:
         ordering = ['question_number']
