@@ -1,6 +1,10 @@
 from rest_framework import viewsets
 from .models import Question, Answer, QuestionProgress
-from .serializers import QuestionSerializer, AnswerSerializer, QuestionProgressSerializer
+from .serializers import (
+    QuestionSerializer,
+    AnswerSerializer,
+    QuestionProgressSerializer,
+)
 
 
 class QuestionViewSet(viewsets.ModelViewSet):

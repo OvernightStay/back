@@ -5,7 +5,7 @@ from .models import Question, Answer, QuestionProgress
 class AnswerSerializer(serializers.ModelSerializer):
     class Meta:
         model = Answer
-        fields = ['id', 'text', 'number']
+        fields = ["id", "text", "number"]
 
 
 class QuestionSerializer(serializers.ModelSerializer):
@@ -13,7 +13,7 @@ class QuestionSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Question
-        fields = ['id', 'text', 'question_number', 'answers']
+        fields = ["id", "text", "question_number", "answers"]
 
 
 class QuestionProgressSerializer(serializers.ModelSerializer):
@@ -23,4 +23,4 @@ class QuestionProgressSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = QuestionProgress
-        fields = ['id', 'player', 'question', 'selected_answer']
+        fields = ["id", "player", "question", "selected_answer"]
