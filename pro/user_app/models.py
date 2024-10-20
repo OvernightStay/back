@@ -31,8 +31,8 @@ class PlayerManager(BaseUserManager):
 
     def clear_temporary_password(self, user):
         if (
-            user.temporary_password
-            and (timezone.now() - user.temporary_password_created_at).seconds >= 10
+                user.temporary_password
+                and (timezone.now() - user.temporary_password_created_at).seconds >= 10
         ):
             user.temporary_password = None
             user.save()
@@ -107,52 +107,3 @@ class Player(AbstractUser, PermissionsMixin):
     class Meta:
         verbose_name = "Игрок"
         verbose_name_plural = "Игроки"
-
-
-# Пример моделки для предметов в играх
-class Item(models.Model):
-    title = models.CharField(max_length=255, unique=True, verbose_name="Название")
-    description = models.TextField(default="", verbose_name="Описание")
-    image = models.ImageField(
-        upload_to="images/", verbose_name="Изображение", null=True, blank=True
-    )
-
-    class Meta:
-        verbose_name = "Предмет"
-        verbose_name_plural = "Предметы"
-
-
-# Менеджер для модели Рюкзака
-class BackpackManager(models.Manager):
-    # Переписывание метода создания для ограничения по количеству
-    def create(self, *args, **kwargs):
-        if self.model.objects.filter(player=kwargs["player"]).count() > 0:
-            raise ValidationError("Достигнут лимит на создание обьектов")
-        return super().create(*args, **kwargs)
-
-
-# Рюкзак
-class Backpack(models.Model):
-    objects = BackpackManager()
-
-    player = models.ForeignKey(Player, on_delete=models.CASCADE, verbose_name="Игрок")
-    created_at = models.DateTimeField(auto_now_add=True, verbose_name="Время создания")
-
-    def __str__(self):
-        return f"Backpack of {self.player.first_name} {self.player.last_name}"
-
-    class Meta:
-        verbose_name = "Рюкзак"
-        verbose_name_plural = "Рюкзаки"
-
-
-# Позиции рюкзака
-class BackpackItem(models.Model):
-    backpack = models.ForeignKey(
-        Backpack, on_delete=models.CASCADE, verbose_name="Рюкзак"
-    )
-    item = models.ForeignKey(Item, on_delete=models.CASCADE, verbose_name="Предмет")
-
-    class Meta:
-        verbose_name = "Предмет рюкзака"
-        verbose_name_plural = "Предметы рюкзака"
