@@ -1,11 +1,11 @@
 from rest_framework import serializers
-from .models import Question, Answer
+from .models import Question, Answer, QuestionProgress
 
 
 class AnswerSerializer(serializers.ModelSerializer):
     class Meta:
         model = Answer
-        fields = ['id', 'text', 'next_question']
+        fields = ['id', 'text', 'number']
 
 
 class QuestionSerializer(serializers.ModelSerializer):
@@ -13,4 +13,14 @@ class QuestionSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Question
-        fields = ['id', 'text', 'answers']
+        fields = ['id', 'text', 'question_number', 'answers']
+
+
+class QuestionProgressSerializer(serializers.ModelSerializer):
+    player = serializers.PrimaryKeyRelatedField(read_only=True)
+    question = QuestionSerializer(read_only=True)
+    selected_answer = AnswerSerializer(read_only=True)
+
+    class Meta:
+        model = QuestionProgress
+        fields = ['id', 'player', 'question', 'selected_answer']
