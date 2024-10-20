@@ -22,3 +22,4 @@ tzdata==2024.1
 uritemplate==4.1.1
 gunicorn==23.0.0
 psycopg2-binary==2.9.10
+ruff==0.7.0
