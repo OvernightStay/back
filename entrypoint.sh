@@ -1,25 +1,28 @@
-#!/bin/sh
+#!/bin/bash
 
-# Ожидание запуска базы данных
-echo "Waiting for postgres to start..."
-while ! pg_isready -h db -p 5432 -q; do
-  >&2 echo "Postgres is unavailable - sleeping"
-  sleep 5
+# Выход при любой ошибке
+set -e
+
+# Ожидание запуска PostgreSQL
+echo "Waiting for PostgreSQL..."
+
+while ! nc -z db 5432; do
+  sleep 0.1
 done
-echo "Postgres is ready"
 
-# Выполнение команды makemigrations перед миграциями
-echo "Making migrations..."
-python manage.py makemigrations
+echo "PostgreSQL started"
 
-# Выполнение миграций
-echo "Applying migrations..."
-python manage.py migrate --noinput
+# Переходим в директорию /app
+cd /app
+
+# Применение миграций базы данных
+echo "Applying database migrations..."
+python manage.py migrate
 
 # Сборка статических файлов
 echo "Collecting static files..."
 python manage.py collectstatic --noinput
 
-# Запуск Gunicorn сервера
-echo "Starting Gunicorn..."
-exec gunicorn --bind 0.0.0.0:8000 pro.wsgi:application
+# Запуск сервера (например, gunicorn)
+echo "Starting server..."
+gunicorn pro.wsgi:application --bind 0.0.0.0:8000
